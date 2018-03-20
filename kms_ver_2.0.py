@@ -10,6 +10,8 @@ import sys
 import os
 import pycx4.qcda as cda
 import json
+#try
+
 
 class KickerApp(object):
     def __init__(self):
