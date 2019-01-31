@@ -4,9 +4,6 @@ from PyQt4 import QtGui, QtCore, uic
 import datetime
 import sys
 import pyqtgraph as pg
-
-from cothread import catools
-import cothread
 import pycx4.qcda as cda
 import json
 
@@ -402,7 +399,7 @@ class KickerPlot(QtGui.QMainWindow):
         bins_num = int(2 * self.spinBox_hist_range.value() / self.spinBox_bins_len.value())
         self.chan_n_interp_ppn.setValue(bins_num)  # not this channel yet
 
-    def active_tab(self):
+    def active_tab(self, chan):
         ic_mode = self.chan_ic_mode.val[0]
         if (ic_mode == 'e'):
             self.tabWidget.setCurrentIndex(1)
@@ -462,14 +459,15 @@ class KickerPlot(QtGui.QMainWindow):
             self.cmd_chan.setValue(json.dumps(cdict))
 
     def stg_dflt(self):
-        cdict = json.loads(self.cmd_chan.val)
-        if cdict['cmd'] == 'ready':
-            print("stg")
-            cdict = {}
-            cdict['cmd'] = 'stg_dflt'
-            self.cmd_chan.setValue(json.dumps(cdict))
+        # cdict = json.loads(self.cmd_chan.val)
+        # if cdict['cmd'] == 'ready':
+        #     print("stg")
+        #     cdict = {}
+        #     cdict['cmd'] = 'stg_dflt'
+        print ('hfhff')
+        self.cmd_chan.setValue(json.dumps({'cmd': 'stg_dflt'}))
 
-    def status_info(self):
+    def status_info(self, chan):
         try:
             rdict = json.loads(self.res_chan.val)
         except:

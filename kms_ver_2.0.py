@@ -1,22 +1,19 @@
 #!/usr/bin/python
 
-from PyQt4 import QtCore
+#from PyQt4 import QtCore
 import numpy as np
-import pyqtgraph as pg
 from scipy import optimize
 from scipy import interpolate
-from acc_ctl.service_daemon import Service
+from aux.service_daemon import CXService
 import sys
 import os
-import pycx4.qcda as cda
+import pycx4.pycda as cda
 import json
-#try
 
 
 class KickerApp(object):
     def __init__(self):
         super(KickerApp, self).__init__()
-        from cothread import catools
 
         self.init_chans()
 
@@ -53,7 +50,7 @@ class KickerApp(object):
         self.chan_pn.valueChanged.connect(self.data_proc)
         self.chan_kp.valueChanged.connect(self.data_proc)
         self.chan_kn.valueChanged.connect(self.data_proc)
-        self.cmd_chan.valueChanged.connect(self.daemon_cmd)
+        self.cmd_chan.valueMeasured.connect(self.daemon_cmd)
         self.chan_ic_mode.valueChanged.connect(self.kkr_sel)
         self.chan_n_interp_ppn.valueChanged.connect(self.hist_tun)
         self.chan_histo_range_ppn.valueChanged.connect(self.hist_tun)
@@ -329,20 +326,23 @@ class KickerApp(object):
                             'cxhw:18.adc200_kkr2.line1e': self.chan_t_peak_kep,
                             'cxhw:18.adc200_kkr2.line2e': self.chan_t_peak_ken}
 
-    def hist_tun(self):
+    def hist_tun(self, chan):
         self.hist_range = self.chan_histo_range_ppn.val
         self.bins_num = int(self.chan_n_interp_ppn.val)  # not this channel yet
 
     def adc200_kkr_default(self):
-        if self.chan_adc200_ptsofs_1.val == 560:
+        print('im here 1')
+        if self.chan_adc200_ptsofs_1.val == 590:
+            print('im here 2')
             pass
         else:
-            self.chan_adc200_ptsofs_1.setValue(560)
+            print('im here 2')
+            self.chan_adc200_ptsofs_1.setValue(590)
 
-        if self.chan_adc200_ptsofs_2.val == 560:
+        if self.chan_adc200_ptsofs_2.val == 590:
             pass
         else:
-            self.chan_adc200_ptsofs_2.setValue(560)
+            self.chan_adc200_ptsofs_2.setValue(590)
 
         if self.chan_adc200_numpts_1.val == 424:
             pass
@@ -394,7 +394,7 @@ class KickerApp(object):
         else:
             self.chan_adc200_range_2_2.setValue(1)
 
-    def kkr_sel(self):
+    def kkr_sel(self, chan):
         ic_mode = self.chan_ic_mode.val[0]
         if ic_mode == 'p':
             self.chan_sel_all.setValue(1)
@@ -409,8 +409,8 @@ class KickerApp(object):
         Ugood = self.dict_good_chans[name + ic_mode].val
         Tgood = self.chan_Tgood_ppn.val
         if Ugood.__len__() != 0:
-            u_data = mean[275:351]
-            u_data_good = Ugood[275:351]
+            u_data = mean[305:381]
+            u_data_good = Ugood[305:381]
             t_data_good = Tgood[0:76]
 
         self.dict_temp_chans[name + ic_mode].setValue(mean)
@@ -446,7 +446,7 @@ class KickerApp(object):
             self.dict_delta_t[name + ic_mode].setValue(round(delta_t, 1))
             self.sigma_proc(delta_t, name, ic_mode)
 
-    def daemon_cmd(self):
+    def daemon_cmd(self, chan):
         cmd = self.cmd_chan.val
         if cmd.__len__() != 0:
             cdict = json.loads(cmd)
@@ -459,6 +459,7 @@ class KickerApp(object):
                 self.cmd_chan.setValue(json.dumps(cdict))
                 self.res_chan.setValue(json.dumps(rdict))
             if cdict['cmd'] == 'stg_dflt':
+                print('im here 0')
                 self.adc200_kkr_default()
                 cdict = {}
                 rdict = {}
@@ -570,19 +571,28 @@ class KickerApp(object):
             self.dict_hist[name + ic_mode][7].setValue(ppn_y_3)
 
 
-def main_proc():
-    #from cothread import catools
-    import cothread
+class KMService(CXService):
+    def main(self):
+        print('run main')
+        w = KickerApp()
 
-    a = QtCore.QCoreApplication(sys.argv)
-    app = cothread.iqt()
-    w = KickerApp()
-    # w.show()
-    cothread.WaitForQuit()
+    def clean(self):
+        self.log_str('exiting kicker_monitor')
 
 
-def clear_proc():
-    pass
+# def main_proc():
+#     #from cothread import catools
+#     import cothread
+#
+#     a = QtCore.QCoreApplication(sys.argv)
+#     app = cothread.iqt()
+#     w = KickerApp()
+#     # w.show()
+#     cothread.WaitForQuit()
+#
+#
+# def clear_proc():
+#     pass
 
 DIR = os.getcwd()
-a = Service('kick_mon', main_proc, clear_proc)
+km = KMService("kicker_monitor")
