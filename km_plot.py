@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-from PyQt4 import QtGui, QtCore, uic
+from PyQt5.QtWidgets import QApplication, QMainWindow, QHBoxLayout
+from PyQt5 import uic
 import datetime
 import sys
 import pyqtgraph as pg
@@ -8,10 +9,11 @@ import pycx4.qcda as cda
 import json
 
 
-class KickerPlot(QtGui.QMainWindow):
+class KickerPlot(QMainWindow):
     def __init__(self):
         super(KickerPlot, self).__init__()
         uic.loadUi("mainwindow1.ui", self)
+        self.show()
         self.forming_window()
         self.init_chans()
 
@@ -28,14 +30,10 @@ class KickerPlot(QtGui.QMainWindow):
         self.chan_ic_mode.valueChanged.connect(self.active_tab)
         self.res_chan.valueChanged.connect(self.status_info)
 
-        self.connect(self.pushButton_save, QtCore.SIGNAL("clicked()"),
-                     self.push_save)
-        self.connect(self.button_stg_dflt, QtCore.SIGNAL("clicked()"),
-                     self.stg_dflt)
-        self.connect(self.spinBox_hist_range, QtCore.SIGNAL("valueChanged(int)"),
-                     self.hist_tun)
-        self.connect(self.spinBox_bins_len, QtCore.SIGNAL("valueChanged(int)"),
-                     self.hist_tun)
+        self.pushButton_save.clicked.connect(self.push_save)
+        self.button_stg_dflt.clicked.connect(self.stg_dflt)
+        self.spinBox_hist_range.valueChanged.connect(self.hist_tun)
+        self.spinBox_bins_len.valueChanged.connect(self.hist_tun)
 
         self.green_color = 2.5
         self.red_color = 5
@@ -101,7 +99,7 @@ class KickerPlot(QtGui.QMainWindow):
         self.kick_plot_e_kick_n.showGrid(x=True, y=True)
         self.kick_plot_e_kick_n.setRange(yRange=[-0.5, 0.04])
 
-        le = QtGui.QHBoxLayout()
+        le = QHBoxLayout()
         self.uni.setLayout(le)
         le.addWidget(self.win_e)
 
@@ -139,7 +137,7 @@ class KickerPlot(QtGui.QMainWindow):
         self.kick_plot_p_kick_n.showGrid(x=True, y=True)
         self.kick_plot_p_kick_n.setRange(yRange=[-0.5, 0.04])
 
-        lp = QtGui.QHBoxLayout()
+        lp = QHBoxLayout()
         self.uni_1.setLayout(lp)
         lp.addWidget(self.win_p)
 
@@ -466,7 +464,7 @@ class KickerPlot(QtGui.QMainWindow):
             self.statusbar.showMessage(str(save_time))
 
 
-app = QtGui.QApplication(['KickerMonitor'])
-w = KickerPlot()
-w.show()
-sys.exit(app.exec_())
+if __name__ == "__main__":
+    app = QApplication(['kicker_monitor'])
+    w = KickerPlot()
+    sys.exit(app.exec_())
