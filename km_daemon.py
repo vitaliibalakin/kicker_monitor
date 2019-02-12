@@ -3,9 +3,9 @@
 import numpy as np
 from scipy import optimize
 from scipy import interpolate
-from aux.service_daemon import CXService
+from aux.service_daemon import QtService
 import os
-import pycx4.pycda as cda
+import pycx4.qcda as cda
 import json
 
 
@@ -499,13 +499,14 @@ class KickerApp(object):
             self.dict_hist[name][7].setValue(ppn_y_3)
 
 
-class KMService(CXService):
+class KMService(QtService):
     def main(self):
         print('run main')
-        w = KickerApp()
+        self.w = KickerApp()
 
     def clean(self):
         self.log_str('exiting kicker_monitor')
+
 
 DIR = os.getcwd()
 km = KMService("kicker_monitor")
