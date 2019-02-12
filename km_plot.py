@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHBoxLayout
 from PyQt5 import uic
