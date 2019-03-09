@@ -406,6 +406,7 @@ class KickerPlot(QMainWindow):
 
     def chan_proc(self, chan):
         name = chan.name
+        # print(chan.name, chan.max_nelems)
         self.dict_count[name] += 1
         if self.dict_count[name] == 3:
             if len(self.dict_hist[name][0].val):
