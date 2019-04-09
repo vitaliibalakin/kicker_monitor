@@ -366,7 +366,10 @@ class KickerApp(object):
 
     def correlation(self, name, t_data_good, u_data):
         corr = np.correlate(self.ki_amp_c, self.ki_amp_g, 'same')
+        corr1 = np.correlate(self.ki_amp_c, self.ki_amp_g, 'full')
         delta_t = (corr.argmax() - (len(corr) / 2)) * self.STEP
+        delta_t1 = (corr1.argmax() - (len(corr1) / 2)) * self.STEP
+        print(delta_t, delta_t1)
         if abs(delta_t) < 20:
             gaussfit = lambda p, x: p[0] * np.exp(-(((x - p[1]) / p[2]) ** 2) / 2) + p[3]  # signal peak and ampl
             errfunc = lambda p, x, y: gaussfit(p, x) - u_data
