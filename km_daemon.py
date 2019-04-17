@@ -330,12 +330,12 @@ class KickerApp(object):
         self.hist_ctrl[chan.name] = int(chan.val)
 
     def adc200_kkr_default(self):
-        self.chan_adc200_ptsofs_1.setValue(590)
-        self.chan_adc200_ptsofs_2.setValue(590)
+        self.chan_adc200_ptsofs_1.setValue(540)
+        self.chan_adc200_ptsofs_2.setValue(540)
         self.chan_adc200_numpts_1.setValue(424)
         self.chan_adc200_numpts_2.setValue(424)
-        self.chan_adc200_timing_1.setValue(0)
-        self.chan_adc200_timing_2.setValue(0)
+        self.chan_adc200_timing_1.setValue(1)
+        self.chan_adc200_timing_2.setValue(1)
         self.chan_adc200_frq_div_1.setValue(0)
         self.chan_adc200_frq_div_2.setValue(0)
         self.chan_adc200_range_1_1.setValue(1)
