@@ -431,7 +431,6 @@ class KickerApp(object):
     def chans_check(self):
         check_p = self.chan_Ugood_ppn.val
         check_e = self.chan_Ugood_pen.val
-
         if not len(self.cmd_chan.val):
             self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
             self.res_chan.setValue(json.dumps({'res': 'good'}))
