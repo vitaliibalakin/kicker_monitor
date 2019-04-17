@@ -162,8 +162,8 @@ class KickerPlot(QMainWindow):
     def init_chans(self):
         self.chan_sel_all = cda.DChan("cxhw:18.kkr_sel_all.0")
 
-        self.cmd_chan = cda.StrChan("cxhw:2.kickADCproc.inj.cmd@u")
-        self.res_chan = cda.StrChan("cxhw:2.kickADCproc.inj.res@u")
+        self.cmd_chan = cda.StrChan("cxhw:2.kickADCproc.inj.cmd", on_update=1, max_nelems=1024)
+        self.res_chan = cda.StrChan("cxhw:2.kickADCproc.inj.res", on_update=1, max_nelems=1024)
 
         self.chan_ic_mode = cda.StrChan("cxhw:0.k500.modet", max_nelems=4)
 
@@ -450,7 +450,7 @@ class KickerPlot(QMainWindow):
             self.cmd_chan.setValue(json.dumps({'cmd': 'save'}))
 
     def stg_dflt(self):
-        print ('hfhff')
+        print('stg_dflt')
         self.cmd_chan.setValue(json.dumps({'cmd': 'stg_dflt'}))
 
     def status_info(self, chan):

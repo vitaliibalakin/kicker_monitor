@@ -78,8 +78,8 @@ class KickerApp(object):
 
         self.chan_sel_all = cda.DChan("cxhw:18.kkr_sel_all.0")
 
-        self.cmd_chan = cda.StrChan("cxhw:2.kickADCproc.inj.cmd@u")
-        self.res_chan = cda.StrChan("cxhw:2.kickADCproc.inj.res@u")
+        self.cmd_chan = cda.StrChan("cxhw:2.kickADCproc.inj.cmd", on_update=1, max_nelems=1024)
+        self.res_chan = cda.StrChan("cxhw:2.kickADCproc.inj.res", on_update=1, max_nelems=1024)
 
         self.chan_ic_mode = cda.StrChan("cxhw:0.k500.modet", max_nelems=4)
 
@@ -330,7 +330,6 @@ class KickerApp(object):
         self.hist_ctrl[chan.name] = int(chan.val)
 
     def adc200_kkr_default(self):
-        print('im here 1')
         self.chan_adc200_ptsofs_1.setValue(590)
         self.chan_adc200_ptsofs_2.setValue(590)
         self.chan_adc200_numpts_1.setValue(424)
@@ -369,7 +368,7 @@ class KickerApp(object):
         corr1 = np.correlate(self.ki_amp_c, self.ki_amp_g, 'full')
         delta_t = (corr.argmax() - (len(corr) / 2)) * self.STEP
         delta_t1 = (corr1.argmax() - (len(corr1) / 2)) * self.STEP
-        print(delta_t, delta_t1)
+        # print(delta_t, delta_t1)
         if abs(delta_t) < 20:
             gaussfit = lambda p, x: p[0] * np.exp(-(((x - p[1]) / p[2]) ** 2) / 2) + p[3]  # signal peak and ampl
             errfunc = lambda p, x, y: gaussfit(p, x) - u_data
@@ -389,6 +388,7 @@ class KickerApp(object):
             self.sigma_proc(delta_t, name)
 
     def daemon_cmd(self, chan):
+        print('daemon_cmd')
         cmd = chan.val
         if cmd:
             cdict = json.loads(cmd)
@@ -397,7 +397,6 @@ class KickerApp(object):
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
                 self.res_chan.setValue(json.dumps({'res': 'good'}))
             if cdict['cmd'] == 'stg_dflt':
-                print('im here 0')
                 self.adc200_kkr_default()
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
                 self.res_chan.setValue(json.dumps({'res': 'good'}))
@@ -406,12 +405,12 @@ class KickerApp(object):
         if self.ic_mode == 'p':
             start = 0
             end = 4
-            name = DIR + "good_chan_positron"
+            name = DIR + "/good_chan_positron"
             print(os.getcwd())
         else:
             start = 4
             end = 8
-            name = DIR + "good_chan_electron"
+            name = DIR + "/good_chan_electron"
             print(os.getcwd())
         f = open(name, 'w')
         for i in range(start, end):
@@ -432,24 +431,25 @@ class KickerApp(object):
     def chans_check(self):
         check_p = self.chan_Ugood_ppn.val
         check_e = self.chan_Ugood_pen.val
-        ic_mode = self.chan_ic_mode.val
 
-        if (check_e.__len__() == 0) or (check_p.__len__() == 0):
-            print("here")
+        if not len(self.cmd_chan.val):
+            self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
+            self.res_chan.setValue(json.dumps({'res': 'good'}))
+
+        if not (len(check_e) and len(check_p)):
+            print("chans_check")
             list_GC = self.list_GC
             list_DT = self.list_DT
             self.chan_Tgood_ppn.setValue(self.T)
-            self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
-            self.res_chan.setValue(json.dumps({'res': 'good'}))
             self.chan_n_interp_ppn.setValue(10)
             self.chan_histo_range_ppn.setValue(5)
 
             d_from_file = np.zeros((423,), dtype=np.double)
-            f = open(DIR + "good_chan_electron", "r")
+            f = open(DIR + "/good_chan_electron", "r")
             start = 4
             end = 8
             for j in range(start, end):
-                print("write")
+                print("good_chans_ele_write")
                 L = f.readline()
                 L = L.split()
                 for i in range(0, 423):
@@ -458,11 +458,11 @@ class KickerApp(object):
             f.close()
 
             d_from_file = np.zeros((423,), dtype=np.double)
-            f = open(DIR + "good_chan_positron", "r")
+            f = open(DIR + "/good_chan_positron", "r")
             start = 0
             end = 4
             for j in range(start, end):
-                print("write")
+                print("good_chans_ele_write")
                 L = f.readline()
                 L = L.split()
                 for i in range(0, 423):
