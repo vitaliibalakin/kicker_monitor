@@ -511,5 +511,5 @@ class KMService(QtService):
         self.log_str('exiting kicker_monitor')
 
 
-DIR = os.getcwd()
+DIR = os.getcwd() + '/'
 km = KMService("kicker_monitor")
