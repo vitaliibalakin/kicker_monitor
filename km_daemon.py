@@ -428,30 +428,28 @@ class KickerApp(object):
 
         if not (len(check_e) and len(check_p)):
             print("chans_check")
-            # list_GC = self.list_GC
-            for i in range(0, 8):
-                self.list_GC[i].setValue(self.list_TC[i].val)
+            list_GC = self.list_GC
             self.chan_Tgood_ppn.setValue(self.T)
             self.chan_n_interp_ppn.setValue(10)
             self.chan_histo_range_ppn.setValue(5)
 
-            # # loading for electons
-            # saved_data = np.loadtxt(DIR + "/good_chan_electron", skiprows=1)
-            # for i in range(4, 8):
-            #     list_GC[i].setValue(saved_data[i-4])
-            # f = open(DIR + "/good_chan_electron", 'r')
-            # time = f.readline()
-            # f.close()
-            # self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'save', 'time': time}))
-            #
-            # # loading for positons
-            # saved_data = np.loadtxt(DIR + "/good_chan_positron", skiprows=1)
-            # for i in range(0, 4):
-            #     list_GC[i].setValue(saved_data[i])
-            # f = open(DIR + "/good_chan_positron", 'r')
-            # time = f.readline()
-            # f.close()
-            # self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'save', 'time': time}))
+            # loading for electons
+            saved_data = np.loadtxt(DIR + "/good_chan_electron", skiprows=1)
+            for i in range(4, 8):
+                list_GC[i].setValue(saved_data[i-4])
+            f = open(DIR + "/good_chan_electron", 'r')
+            time = f.readline()
+            f.close()
+            self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'save', 'time': time}))
+
+            # loading for positons
+            saved_data = np.loadtxt(DIR + "/good_chan_positron", skiprows=1)
+            for i in range(0, 4):
+                list_GC[i].setValue(saved_data[i])
+            f = open(DIR + "/good_chan_positron", 'r')
+            time = f.readline()
+            f.close()
+            self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'save', 'time': time}))
 
     def sigma_proc(self, delta_t, name):
         hist_range = self.hist_ctrl["cxhw:2.inj.prekick.p.neg.histo_range"]
