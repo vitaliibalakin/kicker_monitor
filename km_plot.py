@@ -2,7 +2,6 @@
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHBoxLayout
 from PyQt5 import uic
-import datetime
 import sys
 import pyqtgraph as pg
 import pycx4.qcda as cda
@@ -44,6 +43,7 @@ class KickerPlot(QMainWindow):
         self.ke_in = 0
 
         self.active_tab_ = {'p': 0, 'e': 1}
+        self.save_label = {'p': self.label_save_time_p, 'e': self.label_save_time_e}
         self.ic_mode = ''
 
         self.chan_n_interp_ppn.setValue(10)
@@ -455,13 +455,13 @@ class KickerPlot(QMainWindow):
 
     def status_info(self, chan):
         try:
-            rdict = json.loads(self.res_chan.val)
+            rdict = json.loads(chan.val)
+            print(rdict)
         except Exception as err:
             print(err)
         if rdict['res'] == 'good':
-            self.res_chan.setValue(json.dumps({'res': 'good'}))
-            save_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            self.statusbar.showMessage(str(save_time))
+            if rdict['last_cmd'] == 'save':
+                self.save_label[self.ic_mode].setText(rdict['time'])
 
 
 if __name__ == "__main__":

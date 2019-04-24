@@ -7,6 +7,7 @@ from aux.service_daemon import QtService
 import os
 import pycx4.qcda as cda
 import json
+import datetime
 
 
 class KickerApp(object):
@@ -35,6 +36,7 @@ class KickerApp(object):
         self.STEP = 5.13 / self.n_interp
 
         self.ic_mode = ''
+        self.time_stamp = 0
         self.active_tab = {'p': 1, 'e': 0}
         self.hist_ctrl = {"cxhw:2.inj.prekick.p.neg.histo_range": 5, "cxhw:2.inj.prekick.p.neg.n_interp": 10}
 
@@ -44,7 +46,7 @@ class KickerApp(object):
 
         self.T = np.zeros((1024,), dtype=np.double)                       # time array
         for i in range(0, 1024):
-            self.T[i] = 5 * i
+            self.T[i] = 5.13 * i
 
         self.chan_pp.valueChanged.connect(self.data_proc)
         self.chan_pn.valueChanged.connect(self.data_proc)
@@ -390,84 +392,66 @@ class KickerApp(object):
     def daemon_cmd(self, chan):
         print('daemon_cmd')
         cmd = chan.val
+        self.time_stamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         if cmd:
             cdict = json.loads(cmd)
             if cdict['cmd'] == 'save':
-                self.upload_good_chans()
+                self.save_good_chans()
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
-                self.res_chan.setValue(json.dumps({'res': 'good'}))
+                self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'save', 'time': str(self.time_stamp)}))
             if cdict['cmd'] == 'stg_dflt':
                 self.adc200_kkr_default()
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
-                self.res_chan.setValue(json.dumps({'res': 'good'}))
+                self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'stg_dflt',
+                                                   'time': str(self.time_stamp)}))
 
-    def upload_good_chans(self):
+    def save_good_chans(self):
         if self.ic_mode == 'p':
             start = 0
             end = 4
             name = DIR + "/good_chan_positron"
-            print(os.getcwd())
         else:
             start = 4
             end = 8
             name = DIR + "/good_chan_electron"
-            print(os.getcwd())
-        f = open(name, 'w')
         for i in range(start, end):
-            a = self.list_TC[i].val
-            self.list_GC[i].setValue(a)
-            for j in range(0, 423):
-                f.write(str(a[j]))
-                f.write("\t")
-            f.write("\n")
-        # for i in range(start, end):
-        #     a = list_DT[i].val
-        #     for j in range(0, 200):
-        #         f.write(str(a[j]))
-        #         f.write("\t")
-        #     f.write("\n")
-        f.close()
+            self.list_GC[i].setValue(self.list_TC[i].val)
+        np.savetxt(name, np.array([self.list_TC[start].val, self.list_TC[start+1].val, self.list_TC[start+2].val,
+                                  self.list_TC[start+3].val]), header=str(self.time_stamp))
 
     def chans_check(self):
         check_p = self.chan_Ugood_ppn.val
         check_e = self.chan_Ugood_pen.val
         if not len(self.cmd_chan.val):
             self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
-            self.res_chan.setValue(json.dumps({'res': 'good'}))
+            self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'start', 'time': 'who knows?'}))
 
         if not (len(check_e) and len(check_p)):
             print("chans_check")
-            list_GC = self.list_GC
-            list_DT = self.list_DT
+            # list_GC = self.list_GC
+            for i in range(0, 8):
+                self.list_GC[i].setValue(self.list_TC[i].val)
             self.chan_Tgood_ppn.setValue(self.T)
             self.chan_n_interp_ppn.setValue(10)
             self.chan_histo_range_ppn.setValue(5)
 
-            d_from_file = np.zeros((423,), dtype=np.double)
-            f = open(DIR + "/good_chan_electron", "r")
-            start = 4
-            end = 8
-            for j in range(start, end):
-                print("good_chans_ele_write")
-                L = f.readline()
-                L = L.split()
-                for i in range(0, 423):
-                    d_from_file[i] = float(L[i])
-                list_GC[j].setValue(d_from_file)
-            f.close()
-
-            d_from_file = np.zeros((423,), dtype=np.double)
-            f = open(DIR + "/good_chan_positron", "r")
-            start = 0
-            end = 4
-            for j in range(start, end):
-                print("good_chans_ele_write")
-                L = f.readline()
-                L = L.split()
-                for i in range(0, 423):
-                    d_from_file[i] = float(L[i])
-                list_GC[j].setValue(d_from_file)
-            f.close()
+            # # loading for electons
+            # saved_data = np.loadtxt(DIR + "/good_chan_electron", skiprows=1)
+            # for i in range(4, 8):
+            #     list_GC[i].setValue(saved_data[i-4])
+            # f = open(DIR + "/good_chan_electron", 'r')
+            # time = f.readline()
+            # f.close()
+            # self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'save', 'time': time}))
+            #
+            # # loading for positons
+            # saved_data = np.loadtxt(DIR + "/good_chan_positron", skiprows=1)
+            # for i in range(0, 4):
+            #     list_GC[i].setValue(saved_data[i])
+            # f = open(DIR + "/good_chan_positron", 'r')
+            # time = f.readline()
+            # f.close()
+            # self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'save', 'time': time}))
 
     def sigma_proc(self, delta_t, name):
         hist_range = self.hist_ctrl["cxhw:2.inj.prekick.p.neg.histo_range"]
