@@ -456,12 +456,14 @@ class KickerPlot(QMainWindow):
     def status_info(self, chan):
         try:
             rdict = json.loads(chan.val)
-            print(rdict)
         except Exception as err:
             print(err)
-        if rdict['res'] == 'good':
-            if rdict['last_cmd'] == 'save':
-                self.save_label[self.ic_mode].setText(rdict['time'])
+        try:
+            if rdict['res'] == 'good':
+                if rdict['last_cmd'] == 'save':
+                    self.save_label[self.ic_mode].setText(rdict['time'])
+        except KeyError:
+            print(KeyError)
 
 
 if __name__ == "__main__":
