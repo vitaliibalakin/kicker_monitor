@@ -404,6 +404,19 @@ class KickerApp(object):
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
                 self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'stg_dflt',
                                                    'time': str(self.time_stamp)}))
+            if cdict['cmd'] == 'time':
+                self.save_time()
+
+    def save_time(self):
+        f = open(DIR + "/good_chan_electron", 'r')
+        time = f.readline()
+        f.close()
+        self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'save', 'time': time}))
+
+        f = open(DIR + "/good_chan_positron", 'r')
+        time = f.readline()
+        f.close()
+        self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'save', 'time': time}))
 
     def save_good_chans(self):
         if self.ic_mode == 'p':
@@ -437,19 +450,13 @@ class KickerApp(object):
             saved_data = np.loadtxt(DIR + "/good_chan_electron", skiprows=1)
             for i in range(4, 8):
                 list_GC[i].setValue(saved_data[i-4])
-            f = open(DIR + "/good_chan_electron", 'r')
-            time = f.readline()
-            f.close()
-            self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'save', 'time': time}))
 
             # loading for positons
             saved_data = np.loadtxt(DIR + "/good_chan_positron", skiprows=1)
             for i in range(0, 4):
                 list_GC[i].setValue(saved_data[i])
-            f = open(DIR + "/good_chan_positron", 'r')
-            time = f.readline()
-            f.close()
-            self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'save', 'time': time}))
+
+            self.save_time()
 
     def sigma_proc(self, delta_t, name):
         hist_range = self.hist_ctrl["cxhw:2.inj.prekick.p.neg.histo_range"]

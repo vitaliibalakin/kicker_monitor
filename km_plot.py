@@ -65,6 +65,7 @@ class KickerPlot(QMainWindow):
                               'cxhw:2.inj.prekick.e.neg.Utemp': self.label_dt_e_p_n,
                               'cxhw:2.inj.kick.e.pos.Utemp': self.label_dt_e_k_p,
                               'cxhw:2.inj.kick.e.neg.Utemp': self.label_dt_e_k_n}
+        self.cmd_chan.setValue(json.dumps({'cmd': 'time'}))
 
     def forming_window(self):
         self.win_e = pg.GraphicsLayoutWidget(parent=self)
