@@ -405,18 +405,19 @@ class KickerApp(object):
                 self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'stg_dflt',
                                                    'time': str(self.time_stamp)}))
             if cdict['cmd'] == 'time':
+                self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
                 self.save_time()
 
     def save_time(self):
         f = open(DIR + "/good_chan_electron", 'r')
         time = f.readline()
         f.close()
-        self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'save', 'time': time}))
+        self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'save', 'time': time.split('')[-1]}))
 
         f = open(DIR + "/good_chan_positron", 'r')
         time = f.readline()
         f.close()
-        self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'save', 'time': time}))
+        self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'save', 'time': time.split('')[-1]}))
 
     def save_good_chans(self):
         if self.ic_mode == 'p':
