@@ -6,6 +6,7 @@ import sys
 import pyqtgraph as pg
 import pycx4.qcda as cda
 import json
+import os
 
 
 class KickerPlot(QMainWindow):
@@ -65,7 +66,6 @@ class KickerPlot(QMainWindow):
                               'cxhw:2.inj.prekick.e.neg.Utemp': self.label_dt_e_p_n,
                               'cxhw:2.inj.kick.e.pos.Utemp': self.label_dt_e_k_p,
                               'cxhw:2.inj.kick.e.neg.Utemp': self.label_dt_e_k_n}
-        self.cmd_chan.setValue(json.dumps({'cmd': 'time'}))
 
     def forming_window(self):
         self.win_e = pg.GraphicsLayoutWidget(parent=self)
@@ -159,6 +159,15 @@ class KickerPlot(QMainWindow):
                               'cxhw:2.inj.prekick.e.neg.Utemp': self.kick_plot_e_prekick_n,
                               'cxhw:2.inj.kick.e.pos.Utemp': self.kick_plot_e_kick_p,
                               'cxhw:2.inj.kick.e.neg.Utemp': self.kick_plot_e_kick_n}
+
+        f = open(DIR + "/good_chan_positron", 'r')
+        time = f.readline()
+        f.close()
+        self.label_save_time_p.setText(time.split()[-2] + ' ' + time.split()[-1])
+        f = open(DIR + "/good_chan_electron", 'r')
+        time = f.readline()
+        f.close()
+        self.label_save_time_e.setText(time.split()[-2] + ' ' + time.split()[-1])
 
     def init_chans(self):
         self.chan_sel_all = cda.DChan("cxhw:18.kkr_sel_all.0")
@@ -468,6 +477,7 @@ class KickerPlot(QMainWindow):
 
 
 if __name__ == "__main__":
+    DIR = os.getcwd()
     app = QApplication(['kicker_monitor'])
     w = KickerPlot()
     sys.exit(app.exec_())
