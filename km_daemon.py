@@ -13,9 +13,8 @@ import datetime
 class KickerApp(object):
     def __init__(self):
         super(KickerApp, self).__init__()
-
         self.init_chans()
-
+        # djghgsdf
         self.list_GC = [self.chan_Ugood_ppn, self.chan_Ugood_kpn, self.chan_Ugood_ppp, self.chan_Ugood_kpp,
                         self.chan_Ugood_pen, self.chan_Ugood_ken, self.chan_Ugood_pep, self.chan_Ugood_kep]
         self.list_TC = [self.chan_Utemp_ppn, self.chan_Utemp_kpn, self.chan_Utemp_ppp, self.chan_Utemp_kpp,
@@ -33,7 +32,7 @@ class KickerApp(object):
         self.fit_data = np.zeros((76,), dtype=np.double)
 
         self.n_interp = 20
-        self.STEP = 5.13 / self.n_interp
+        self.STEP = 5.6 / self.n_interp
 
         self.ic_mode = ''
         self.time_stamp = 0
@@ -46,7 +45,7 @@ class KickerApp(object):
 
         self.T = np.zeros((1024,), dtype=np.double)                       # time array
         for i in range(0, 1024):
-            self.T[i] = 5.13 * i
+            self.T[i] = 5.6 * i
 
         self.chan_pp.valueChanged.connect(self.data_proc)
         self.chan_pn.valueChanged.connect(self.data_proc)
@@ -332,12 +331,12 @@ class KickerApp(object):
         self.hist_ctrl[chan.name] = int(chan.val)
 
     def adc200_kkr_default(self):
-        self.chan_adc200_ptsofs_1.setValue(540)
-        self.chan_adc200_ptsofs_2.setValue(540)
+        self.chan_adc200_ptsofs_1.setValue(440)
+        self.chan_adc200_ptsofs_2.setValue(440)
         self.chan_adc200_numpts_1.setValue(424)
         self.chan_adc200_numpts_2.setValue(424)
-        self.chan_adc200_timing_1.setValue(1)
-        self.chan_adc200_timing_2.setValue(1)
+        self.chan_adc200_timing_1.setValue(2)
+        self.chan_adc200_timing_2.setValue(2)
         self.chan_adc200_frq_div_1.setValue(0)
         self.chan_adc200_frq_div_2.setValue(0)
         self.chan_adc200_range_1_1.setValue(1)
