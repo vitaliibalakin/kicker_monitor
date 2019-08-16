@@ -16,6 +16,7 @@ class KickerPlot(QMainWindow):
         self.show()
         self.forming_window()
         self.init_chans()
+        # nu sho epta
 
         self.chan_Utemp_ppn.valueMeasured.connect(self.chan_proc)
         self.chan_Utemp_ppp.valueMeasured.connect(self.chan_proc)
