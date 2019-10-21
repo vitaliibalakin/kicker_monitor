@@ -19,7 +19,7 @@ class SignalPlot(pg.PlotWidget):
         self.addItem(self.temp_plot)
 
     def update_signal(self, signal, p_type):
-        self.plot_type[p_type].setData(signal)
+        self.plot_type[p_type].setData(signal[275:351])
 
 
 if __name__ == "__main__":

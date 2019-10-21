@@ -6,10 +6,10 @@ import sys
 import pycx4.qcda as cda
 import json
 import os
-from kicker_monitor.km_extraction.histo_plot import HistoPlot
-from kicker_monitor.km_extraction.signal_plot import SignalPlot
-from kicker_monitor.km_extraction.cx_data_exchange import CXDataExchange
-from kicker_monitor.km_extraction.file_data_exchange import FileDataExchange
+from kicker_monitor.aux.histo_plot import HistoPlot
+from kicker_monitor.aux.signal_plot import SignalPlot
+from kicker_monitor.aux.cx_data_exchange import CXDataExchange
+from kicker_monitor.aux.file_data_exchange import FileDataExchange
 
 
 class KickerPlot(QMainWindow):
@@ -129,10 +129,7 @@ class KickerPlot(QMainWindow):
 
     def push_save(self):
         self.file_data_exchange.save_file(self.chan_data_t[self.ic_mode], self.save_label[self.ic_mode], self.ic_mode)
-        # don't force daemon to do this
-        print(json.loads(self.cmd_chan.val))
-        if json.loads(self.cmd_chan.val)['cmd'] == 'ready':
-            self.cmd_chan.setValue(json.dumps({'cmd': 'save'}))
+        self.cmd_chan.setValue(json.dumps({'cmd': 'save'}))
 
     def stg_dflt(self):
         self.cmd_chan.setValue(json.dumps({'cmd': 'stg_dflt'}))
