@@ -6,7 +6,6 @@ import sys
 import pycx4.qcda as cda
 import json
 import os
-import numpy as np
 from kicker_monitor.km_extraction.histo_plot import HistoPlot
 from kicker_monitor.km_extraction.signal_plot import SignalPlot
 from kicker_monitor.km_extraction.cx_data_exchange import CXDataExchange
@@ -101,10 +100,6 @@ class KickerPlot(QMainWindow):
         self.spinBox_hist_range.valueChanged.connect(self.hist_tun)     # OK
         self.spinBox_bins_len.valueChanged.connect(self.hist_tun)       # OK
 
-        self.green_color = 2.5
-        self.red_color = 5
-        self.hist_range = 10
-
         # for some operations e.g. switching
         self.active_tab_ = {'p': 0, 'e': 1}
         self.ic_mode = ''
@@ -137,11 +132,9 @@ class KickerPlot(QMainWindow):
         # don't force daemon to do this
         print(json.loads(self.cmd_chan.val))
         if json.loads(self.cmd_chan.val)['cmd'] == 'ready':
-            print("save")
             self.cmd_chan.setValue(json.dumps({'cmd': 'save'}))
 
     def stg_dflt(self):
-        print('stg_dflt')
         self.cmd_chan.setValue(json.dumps({'cmd': 'stg_dflt'}))
 
 

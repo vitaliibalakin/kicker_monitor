@@ -6,7 +6,6 @@ import sys
 import pycx4.qcda as cda
 import json
 import os
-import numpy as np
 from kicker_monitor.km_extraction.histo_plot import HistoPlot
 from kicker_monitor.km_extraction.signal_plot import SignalPlot
 from kicker_monitor.km_extraction.cx_data_exchange import CXDataExchange
@@ -100,10 +99,6 @@ class KickerPlot(QMainWindow):
         self.button_stg_dflt.clicked.connect(self.stg_dflt)     # OK
         self.spinBox_hist_range.valueChanged.connect(self.hist_tun)     # OK
         self.spinBox_bins_len.valueChanged.connect(self.hist_tun)       # OK
-
-        self.green_color = 2.5
-        self.red_color = 5
-        self.hist_range = 10
 
         # for some operations e.g. switching
         self.active_tab_ = {'p': 0, 'e': 1}
