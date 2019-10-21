@@ -6,6 +6,7 @@ import sys
 import pycx4.qcda as cda
 import json
 import os
+import numpy as np
 from kicker_monitor.km_extraction.histo_plot import HistoPlot
 from kicker_monitor.km_extraction.signal_plot import SignalPlot
 from kicker_monitor.km_extraction.cx_data_exchange import CXDataExchange
@@ -19,10 +20,15 @@ class KickerPlot(QMainWindow):
         uic.loadUi("mainwindow1.ui", self)
         self.show()
 
+        # variables for histo
+        self.range_a = -5
+        self.range_b = 5
+        self.bins_num = 10
+
         # plot area
         self.e_signal_plots = {"pre_pos": SignalPlot(self, -0.05, 0.5), "pre_neg": SignalPlot(self, -0.5, 0.05),
                                "kick_pos": SignalPlot(self, -0.12, 0.5), "kick_neg": SignalPlot(self, -0.5, 0.04)}
-        self.e_histo_plots = {key: HistoPlot(self) for key, val in self.signal_plots.items()}
+        self.e_histo_plots = {key: HistoPlot(self) for key, val in self.e_signal_plots.items()}
         # widgets positioning
         e_layout = QGridLayout()
         e_layout.addWidget(self.e_histo_plots["pre_pos"], 0, 0)
@@ -37,16 +43,16 @@ class KickerPlot(QMainWindow):
 
         self.p_signal_plots = {"pre_pos": SignalPlot(self, -0.05, 0.5), "pre_neg": SignalPlot(self, -0.5, 0.05),
                                "kick_pos": SignalPlot(self, -0.12, 0.5), "kick_neg": SignalPlot(self, -0.5, 0.04)}
-        self.p_histo_plots = {key: HistoPlot(self) for key, val in self.signal_plots.items()}
+        self.p_histo_plots = {key: HistoPlot(self) for key, val in self.p_signal_plots.items()}
         p_layout = QGridLayout()
-        p_layout.addWidget(self.e_histo_plots["pre_pos"], 0, 0)
-        p_layout.addWidget(self.e_signal_plots["pre_pos"], 0, 1)
-        p_layout.addWidget(self.e_histo_plots["pre_neg"], 1, 0)
-        p_layout.addWidget(self.e_signal_plots["pre_neg"], 1, 1)
-        p_layout.addWidget(self.e_histo_plots["kick_pos"], 2, 0)
-        p_layout.addWidget(self.e_signal_plots["kick_pos"], 2, 1)
-        p_layout.addWidget(self.e_histo_plots["kick_neg"], 3, 0)
-        p_layout.addWidget(self.e_signal_plots["kick_neg"], 3, 1)
+        p_layout.addWidget(self.p_histo_plots["pre_pos"], 0, 0)
+        p_layout.addWidget(self.p_signal_plots["pre_pos"], 0, 1)
+        p_layout.addWidget(self.p_histo_plots["pre_neg"], 1, 0)
+        p_layout.addWidget(self.p_signal_plots["pre_neg"], 1, 1)
+        p_layout.addWidget(self.p_histo_plots["kick_pos"], 2, 0)
+        p_layout.addWidget(self.p_signal_plots["kick_pos"], 2, 1)
+        p_layout.addWidget(self.p_histo_plots["kick_neg"], 3, 0)
+        p_layout.addWidget(self.p_signal_plots["kick_neg"], 3, 1)
         self.uni_p.setLayout(p_layout)
 
         self.chan_data_t = {"e": [CXDataExchange(self.data_receiver, "cxhw:2.inj.prekick.e.pos.Utemp", "e", "pre_pos",
@@ -81,16 +87,16 @@ class KickerPlot(QMainWindow):
                                                  "kick_pos", n_elems=200),
                                   CXDataExchange(self.data_receiver, "cxhw:2.inj.kick.p.neg.delta_t_array", "h_p",
                                                  "kick_neg", n_elems=200)]}
+        self.file_data_exchange = FileDataExchange(os.getcwd(), self.data_receiver)
 
-        # variables for histo
-        self.range_a = -5
-        self.range_b = 5
-        self.bins_num = 10
+        # other chans
+        self.chan_ic_mode = cda.StrChan("cxhw:0.k500.modet", max_nelems=4)
+        self.cmd_chan = cda.StrChan("cxhw:2.kickADCproc.inj.cmd", on_update=1, max_nelems=1024)
+        self.res_chan = cda.StrChan("cxhw:2.kickADCproc.inj.res", on_update=1, max_nelems=1024)
 
         self.chan_ic_mode.valueChanged.connect(self.active_tab)     # OK
-        self.res_chan.valueChanged.connect(self.status_info)        # NOT OK
 
-        self.pushButton_save.clicked.connect(self.push_save)    # NOT OK
+        self.pushButton_save.clicked.connect(self.push_save)    # OK
         self.button_stg_dflt.clicked.connect(self.stg_dflt)     # OK
         self.spinBox_hist_range.valueChanged.connect(self.hist_tun)     # OK
         self.spinBox_bins_len.valueChanged.connect(self.hist_tun)       # OK
@@ -104,32 +110,15 @@ class KickerPlot(QMainWindow):
         self.ic_mode = ''
         self.save_label = {'p': self.label_save_time_p, 'e': self.label_save_time_e}
 
-        self.dict_label_st = {'cxhw:2.inj.prekick.p.pos.Utemp': self.label_st_p_p_p,
-                              'cxhw:2.inj.prekick.p.neg.Utemp': self.label_st_p_p_n,
-                              'cxhw:2.inj.kick.p.pos.Utemp': self.label_st_p_k_p,
-                              'cxhw:2.inj.kick.p.neg.Utemp': self.label_st_p_k_n,
-                              'cxhw:2.inj.prekick.e.pos.Utemp': self.label_st_e_p_p,
-                              'cxhw:2.inj.prekick.e.neg.Utemp': self.label_st_e_p_n,
-                              'cxhw:2.inj.kick.e.pos.Utemp': self.label_st_e_k_p,
-                              'cxhw:2.inj.kick.e.neg.Utemp': self.label_st_e_k_n}       # NOT OK
-        self.dict_label_dt = {'cxhw:2.inj.prekick.p.pos.Utemp': self.label_dt_p_p_p,
-                              'cxhw:2.inj.prekick.p.neg.Utemp': self.label_dt_p_p_n,
-                              'cxhw:2.inj.kick.p.pos.Utemp': self.label_dt_p_k_p,
-                              'cxhw:2.inj.kick.p.neg.Utemp': self.label_dt_p_k_n,
-                              'cxhw:2.inj.prekick.e.pos.Utemp': self.label_dt_e_p_p,
-                              'cxhw:2.inj.prekick.e.neg.Utemp': self.label_dt_e_p_n,
-                              'cxhw:2.inj.kick.e.pos.Utemp': self.label_dt_e_k_p,
-                              'cxhw:2.inj.kick.e.neg.Utemp': self.label_dt_e_k_n}       # NOT OK
-
-    def data_receiver(self, data, source, inf_type):
+    def data_receiver(self, data, source, inf_type, which='cur'):
         if source == 'p':
-            self.p_signal_plots[inf_type].update_signal(data, self.good_signal[inf_type])
+            self.p_signal_plots[inf_type].update_signal(data, which)
         elif source == 'e':
-            self.e_signal_plots[inf_type].update_signal(data, self.good_signal[inf_type])
+            self.e_signal_plots[inf_type].update_signal(data, which)
         elif source == 'h_p':
-            self.p_histo_plots[inf_type].update_signal(data)
+            self.p_histo_plots[inf_type].update_signal(data, self.range_a, self.range_b, self.bins_num)
         elif source == 'h_e':
-            self.e_histo_plots[inf_type].update_signal(data)
+            self.e_histo_plots[inf_type].update_signal(data, self.range_a, self.range_b, self.bins_num)
         else:
             print("shouldn't be here")
 
@@ -141,8 +130,10 @@ class KickerPlot(QMainWindow):
     def active_tab(self, chan):
         self.ic_mode = chan.val[0]
         self.tabWidget.setCurrentIndex(self.active_tab_[chan.val[0]])
+        self.file_data_exchange.load_file(self.ic_mode, self.save_label[self.ic_mode])
 
     def push_save(self):
+        self.file_data_exchange.save_file(self.chan_data_t[self.ic_mode], self.save_label[self.ic_mode], self.ic_mode)
         # don't force daemon to do this
         print(json.loads(self.cmd_chan.val))
         if json.loads(self.cmd_chan.val)['cmd'] == 'ready':
@@ -152,18 +143,6 @@ class KickerPlot(QMainWindow):
     def stg_dflt(self):
         print('stg_dflt')
         self.cmd_chan.setValue(json.dumps({'cmd': 'stg_dflt'}))
-
-    def status_info(self, chan):
-        try:
-            rdict = json.loads(chan.val)
-        except Exception as err:
-            print(err)
-        try:
-            if rdict['res'] == 'good':
-                if rdict['last_cmd'] == 'save':
-                    self.save_label[self.ic_mode].setText(rdict['time'])
-        except KeyError:
-            print(KeyError)
 
 
 if __name__ == "__main__":
