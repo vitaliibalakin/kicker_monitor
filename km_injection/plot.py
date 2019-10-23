@@ -15,7 +15,8 @@ from kicker_monitor.aux.file_data_exchange import FileDataExchange
 class KickerPlot(QMainWindow):
     def __init__(self):
         super(KickerPlot, self).__init__()
-
+        pg.setConfigOption('background', 'w')
+        pg.setConfigOption('foreground', 'k')
         uic.loadUi("mainwindow1.ui", self)
         self.show()
 

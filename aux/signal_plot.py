@@ -7,8 +7,6 @@ import pyqtgraph as pg
 
 class SignalPlot(pg.PlotWidget):
     def __init__(self, parent, range_a, range_b):
-        pg.setConfigOption('background', 'w')
-        pg.setConfigOption('foreground', 'k')
         super(SignalPlot, self).__init__(parent=parent)
         self.showGrid(x=True, y=True)
         self.setRange(yRange=[range_a, range_b])

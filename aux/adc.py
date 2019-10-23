@@ -6,6 +6,7 @@ import pycx4.qcda as cda
 class ADC:
     def __init__(self, data_receiver, name, n_elems=424):
         super(ADC, self).__init__()
+        self.name = name
         self.data_receiver = data_receiver
 
         self.chan_line_pos = cda.VChan("cxhw:18." + name + ".line1", max_nelems=n_elems)
@@ -21,8 +22,7 @@ class ADC:
         self.chan_line_neg.valueMeasured.connect(self.data_proc)
 
     def data_proc(self, chan):
-        # self.data_receiver(chan.val)
-        pass
+        self.data_receiver(chan.val, self.name + "." + chan.name.split(".")[-1])
 
     def adc_set_def(self):
         self.chan_adc200_ptsofs.setValue(440)
