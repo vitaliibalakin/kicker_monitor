@@ -9,8 +9,6 @@ import pyqtgraph as pg
 class HistoPlot(pg.PlotWidget):
     def __init__(self, parent):
         super(HistoPlot, self).__init__(parent=parent)
-        pg.setConfigOption('background', 'w')
-        pg.setConfigOption('foreground', 'k')
         self.showGrid(x=True, y=True)
 
     def update_signal(self, signal, range_a, range_b, bin_nums):

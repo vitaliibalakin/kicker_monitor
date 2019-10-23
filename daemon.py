@@ -7,79 +7,31 @@ import numpy as np
 from scipy import optimize
 from scipy import interpolate
 # from aux.service_daemon import QtService
-import os
 import pycx4.qcda as cda
 import json
-from kicker_monitor.aux.adc import ADC
-from kicker_monitor.aux.inflector_dev import InfDef
+from kicker_monitor.aux.inf_work_mode import InfWorkMode
 
 
 class KickerDaem(object):
     def __init__(self):
         super(KickerDaem, self).__init__()
 
-        self.adcs = [ADC(self.data_receiver, "adc200_kkr1"), ADC(self.data_receiver, "adc200_kkr2")]
-        self.inflectors = {"p": {"adc200_kkr1.line1": InfDef("inj", "prekick.p.pos"),
-                                 "adc200_kkr1.line2": InfDef("inj", "prekick.p.neg"),
-                                 "adc200_kkr2.line1": InfDef("inj", "kick.p.pos"),
-                                 "adc200_kkr2.line2": InfDef("inj", "kick.p.neg")},
-                           "e": {"adc200_kkr1.line1": InfDef("inj", "prekick.e.pos"),
-                                 "adc200_kkr1.line2": InfDef("inj", "prekick.e.neg"),
-                                 "adc200_kkr2.line1": InfDef("inj", "kick.e.pos"),
-                                 "adc200_kkr2.line2": InfDef("inj", "kick.e.neg")}}
-
-        self.chan_ic_mode = cda.StrChan("cxhw:0.k500.modet", max_nelems=4)
-        self.chan_sel_all = cda.DChan("cxhw:18.kkr_sel_all.0")
         self.cmd_chan = cda.StrChan("cxhw:2.kickADCproc.inj.cmd", on_update=1, max_nelems=1024)
         self.res_chan = cda.StrChan("cxhw:2.kickADCproc.inj.res", on_update=1, max_nelems=1024)
 
-        self.u_data_good = np.zeros((76,), dtype=np.double)
-        self.u_data = np.zeros((76,), dtype=np.double)
-        self.t_data_good = np.zeros((76,), dtype=np.double)
-        self.fit_data = np.zeros((76,), dtype=np.double)
+        self.inj = InfWorkMode("inj", self.data_proc)
 
         self.n_interp = 20
         self.STEP = 0.25  # 5.6 / self.n_interp = 0.28, I need 0.25 for start
 
-        self.ic_mode = ''
         self.time_stamp = 0
 
         self.ki_time = np.zeros((75 * self.n_interp,), dtype=np.double)
         self.ki_amp_g = np.zeros((75 * self.n_interp,), dtype=np.double)  # g = good
         self.ki_amp_c = np.zeros((75 * self.n_interp,), dtype=np.double)  # c = compare
 
-        self.active_tab = {'p': 1, 'e': 0}
-
         self.cmd_chan.valueMeasured.connect(self.daemon_cmd)
-        self.chan_ic_mode.valueChanged.connect(self.kkr_sel)
         print("prog_start")
-
-    def data_receiver(self, val, i_type):
-        self.inflectors[self.ic_mode][i_type].chan_volt_temp.setValue(val)
-        self.inflectors[self.ic_mode][i_type].cur_val = val
-        good_val = self.inflectors[self.ic_mode][i_type].chan_volt_good.val
-        if len(good_val):
-            self.data_proc(self.inflectors[self.ic_mode][i_type])
-        else:
-            if self.ic_mode == "e":
-                filename = os.getcwd() + "/km_injection" + "/good_chan_electron"
-            elif self.ic_mode == "p":
-                filename = os.getcwd() + "/km_injection" + "/good_chan_positron"
-            else:
-                filename = "WTF"
-            data = np.loadtxt(filename, skiprows=1)
-            i = 0
-            for key, infl in self.inflectors[self.ic_mode].items():
-                infl.chan_volt_good.setValue(data[i])
-                i += 1
-
-    def adc200_kkr_default(self):
-        for adc in self.adcs:
-            adc.adc_set_def()
-
-    def kkr_sel(self, chan):
-        self.ic_mode = chan.val[0]
-        self.chan_sel_all.setValue(self.active_tab[self.ic_mode])
 
     def data_proc(self, infl):
         self.expanding_data(infl.good_t_arr, infl.chan_volt_good.val[305:381], infl.cur_val[305:381])
