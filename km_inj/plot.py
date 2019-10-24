@@ -128,10 +128,10 @@ class KickerPlot(QMainWindow):
 
     def push_save(self):
         self.file_data_exchange.save_file(self.chan_data_t[self.ic_mode], self.save_label[self.ic_mode], self.ic_mode)
-        self.cmd_chan.setValue(json.dumps({'cmd': 'save'}))
+        self.cmd_chan.setValue(json.dumps({'cmd': 'save_inj'}))
 
     def stg_dflt(self):
-        self.cmd_chan.setValue(json.dumps({'cmd': 'stg_dflt'}))
+        self.cmd_chan.setValue(json.dumps({'cmd': 'stg_dflt_inj'}))
 
 
 if __name__ == "__main__":
