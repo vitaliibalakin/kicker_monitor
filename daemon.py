@@ -61,24 +61,20 @@ class KickerDaem(object):
             chan_dt_arr.setValue(delta_t_arr)
 
     def daemon_cmd(self, chan):
-        print('daemon_cmd')
+        print(chan.val)
         cmd = chan.val
         if cmd:
             cdict = json.loads(cmd)
             if cdict['cmd'] == 'save_inj':
                 self.inj.load_new_good_vals()
+                self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
             elif cdict['cmd'] == 'save_ext':
-                pass
+                self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
             if cdict['cmd'] == 'stg_dflt_inj':
                 self.inj.adc200_kkr_default()
+                self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
             elif cdict['cmd'] == 'stg_dflt_ext':
-                self.inj.adc200_kkr_default()
-            self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
-
-    def chans_check(self):
-        if not len(self.cmd_chan.val):
-            self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
-            self.res_chan.setValue(json.dumps({'res': 'good', 'last_cmd': 'start', 'time': 'who knows?'}))
+                self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
 
 
 # class KMService(QtService):
