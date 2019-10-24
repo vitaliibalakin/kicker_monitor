@@ -43,18 +43,21 @@ class InfWorkMode:
         if len(good_val):
             self.data_proc(self.inflectors[self.ic_mode][i_type])
         else:
-            if self.ic_mode == "e":
-                filename = os.getcwd() + "/km_" + self.cycle_part + "/good_chan_electron"
-            elif self.ic_mode == "p":
-                filename = os.getcwd() + "/km" + self.cycle_part + "/good_chan_positron"
-            else:
-                filename = "WTF"
-            data = np.loadtxt(filename, skiprows=1)
-            i = 0
-            for key, infl in self.inflectors[self.ic_mode].items():
-                infl.chan_volt_good.setValue(data[i])
-                i += 1
+            self.load_new_good_vals()
 
     def adc200_kkr_default(self):
         for adc in self.adcs:
             adc.adc_set_def()
+
+    def load_new_good_vals(self):
+        if self.ic_mode == "e":
+            filename = os.getcwd() + "/km_" + self.cycle_part + "/good_chan_electron"
+        elif self.ic_mode == "p":
+            filename = os.getcwd() + "/km" + self.cycle_part + "/good_chan_positron"
+        else:
+            filename = "WTF"
+        data = np.loadtxt(filename, skiprows=1)
+        i = 0
+        for key, infl in self.inflectors[self.ic_mode].items():
+            infl.chan_volt_good.setValue(data[i])
+            i += 1

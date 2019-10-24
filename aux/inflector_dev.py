@@ -23,5 +23,5 @@ class InfDef:
         self.chan_n_interp = cda.DChan("cxhw:2." + source + "." + inf_type + ".n_interp")
         self.chan_delta_arr = cda.VChan("cxhw:2." + source + "." + inf_type + ".delta_t_array", max_nelems=200)
 
-    def get_good_volt_val(self):
+    def load_new_good_vals(self):
         pass

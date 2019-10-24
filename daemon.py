@@ -66,9 +66,11 @@ class KickerDaem(object):
         if cmd:
             cdict = json.loads(cmd)
             if cdict['cmd'] == 'save':
+                print("save")
+                self.inj.load_new_good_vals()
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
             if cdict['cmd'] == 'stg_dflt':
-                self.adc200_kkr_default()
+                self.inj.adc200_kkr_default()
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
 
     def chans_check(self):
