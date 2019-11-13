@@ -6,7 +6,7 @@ import sys
 import numpy as np
 from scipy import optimize
 from scipy import interpolate
-# from aux.service_daemon import QtService
+from aux.service_daemon import QtService
 import pycx4.qcda as cda
 import json
 from kicker_monitor.aux.inf_work_mode import InfWorkMode
@@ -22,7 +22,7 @@ class KickerDaem(object):
         self.inj = InfWorkMode("inj", self.data_proc)
 
         self.n_interp = 20
-        self.STEP = 0.25  # 5.6 / self.n_interp = 0.28, I need 0.25 for start
+        self.STEP = 5.6 / self.n_interp  # = 0.28, I need 0.25 for start
 
         self.time_stamp = 0
 
@@ -61,7 +61,7 @@ class KickerDaem(object):
             chan_dt_arr.setValue(delta_t_arr)
 
     def daemon_cmd(self, chan):
-        print(chan.val)
+        # print(chan.val)
         cmd = chan.val
         if cmd:
             cdict = json.loads(cmd)
@@ -77,18 +77,18 @@ class KickerDaem(object):
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
 
 
-# class KMService(QtService):
-#     def main(self):
-#         print('run main')
-#         self.w = KickerDaem()
-#
-#     def clean(self):
-#         self.log_str('exiting kicker_monitor')
+class KMService(QtService):
+    def main(self):
+        print('run main')
+        self.w = KickerDaem()
 
-if __name__ == "__main__":
-    app = QApplication(['kicker_monitor'])
-    w = KickerDaem()
-    sys.exit(app.exec_())
+    def clean(self):
+        self.log_str('exiting kicker_monitor')
+
+# if __name__ == "__main__":
+#     app = QApplication(['kicker_monitor'])
+#     w = KickerDaem()
+#     sys.exit(app.exec_())
 
 
-# km = KMService("kicker_monitor")
+km = KMService("inj_infl_monitor")
