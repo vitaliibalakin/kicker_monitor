@@ -7,10 +7,10 @@ import pycx4.qcda as cda
 import json
 import os
 import pyqtgraph as pg
-from kicker_monitor.aux.histo_plot import HistoPlot
-from kicker_monitor.aux.signal_plot import SignalPlot
-from kicker_monitor.aux.cx_data_exchange import CXDataExchange
-from kicker_monitor.aux.file_data_exchange import FileDataExchange
+from kicker_monitor.aux_mod.histo_plot import HistoPlot
+from kicker_monitor.aux_mod.signal_plot import SignalPlot
+from kicker_monitor.aux_mod.cx_data_exchange import CXDataExchange
+from kicker_monitor.aux_mod.file_data_exchange import FileDataExchange
 
 
 class KickerPlot(QMainWindow):

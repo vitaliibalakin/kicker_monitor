@@ -9,7 +9,7 @@ from scipy import interpolate
 from aux.service_daemon import QtService
 import pycx4.qcda as cda
 import json
-from kicker_monitor.aux.inf_work_mode import InfWorkMode
+from kicker_monitor.aux_mod.inf_work_mode import InfWorkMode
 
 
 class KickerDaem(object):

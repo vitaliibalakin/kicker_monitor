@@ -3,8 +3,8 @@
 import pycx4.qcda as cda
 import numpy as np
 import os
-from kicker_monitor.aux.adc import ADC
-from kicker_monitor.aux.inflector_dev import InfDef
+from kicker_monitor.aux_mod.adc import ADC
+from kicker_monitor.aux_mod.inflector_dev import InfDef
 
 
 class InfWorkMode:
