@@ -53,7 +53,7 @@ class InfWorkMode:
         if self.ic_mode == "e":
             filename = os.getcwd() + "/km_" + self.cycle_part + "/good_chan_electron"
         elif self.ic_mode == "p":
-            filename = os.getcwd() + "/km" + self.cycle_part + "/good_chan_positron"
+            filename = os.getcwd() + "/km_" + self.cycle_part + "/good_chan_positron"
         else:
             filename = "WTF"
         data = np.loadtxt(filename, skiprows=1)
