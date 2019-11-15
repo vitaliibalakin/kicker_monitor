@@ -50,6 +50,7 @@ class InfWorkMode:
             adc.adc_set_def()
 
     def load_new_good_vals(self):
+
         if self.ic_mode == "e":
             filename = os.getcwd() + "/km_" + self.cycle_part + "/good_chan_electron"
         elif self.ic_mode == "p":
