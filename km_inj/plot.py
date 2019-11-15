@@ -136,6 +136,6 @@ class KickerPlot(QMainWindow):
 
 if __name__ == "__main__":
     DIR = os.getcwd()
-    app = QApplication(['kicker_monitor'])
+    app = QApplication(['inj_km'])
     w = KickerPlot()
     sys.exit(app.exec_())
