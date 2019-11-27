@@ -27,7 +27,7 @@ class ADC:
     def adc_set_def(self):
         self.chan_adc200_ptsofs.setValue(540)
         self.chan_adc200_numpts.setValue(424)
-        self.chan_adc200_timing.setValue(2)
-        self.chan_adc200_frq_div.setValue(1)
+        self.chan_adc200_timing.setValue(1)
+        self.chan_adc200_frq_div.setValue(0)
         self.chan_range_pos.setValue(1)
         self.chan_range_neg.setValue(1)

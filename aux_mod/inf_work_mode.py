@@ -8,9 +8,9 @@ from kicker_monitor.aux_mod.inflector_dev import InfDef
 
 
 class InfWorkMode:
-    def __init__(self, cycle_part, data_proc):
+    def __init__(self, cycle_part, data_proc, dir):
         super(InfWorkMode, self).__init__()
-
+        self.dir = dir + '/km_'
         self.ic_mode = ''
         self.active_tab = {'p': 1, 'e': 0}
 
@@ -50,13 +50,13 @@ class InfWorkMode:
             adc.adc_set_def()
 
     def load_new_good_vals(self):
-
         if self.ic_mode == "e":
-            filename = os.getcwd() + "/km_" + self.cycle_part + "/good_chan_electron"
+            filename = self.dir + self.cycle_part + "/good_chan_electron"
         elif self.ic_mode == "p":
-            filename = os.getcwd() + "/km_" + self.cycle_part + "/good_chan_positron"
+            filename = self.dir + self.cycle_part + "/good_chan_positron"
         else:
-            filename = "WTF"
+            print("WTF")
+        print(filename)
         data = np.loadtxt(filename, skiprows=1)
         i = 0
         for key, infl in self.inflectors[self.ic_mode].items():

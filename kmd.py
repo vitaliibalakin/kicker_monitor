@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QApplication
 import sys
 
 import numpy as np
+import os
 from scipy import optimize
 from scipy import interpolate
 from aux.service_daemon import QtService
@@ -19,7 +20,7 @@ class KickerDaem(object):
         self.cmd_chan = cda.StrChan("cxhw:2.kickADCproc.inj.cmd", on_update=1, max_nelems=1024)
         self.res_chan = cda.StrChan("cxhw:2.kickADCproc.inj.res", on_update=1, max_nelems=1024)
 
-        self.inj = InfWorkMode("inj", self.data_proc)
+        self.inj = InfWorkMode("inj", self.data_proc, os.getcwd())
 
         self.n_interp = 20
         self.STEP = 5.6 / self.n_interp  # = 0.28, I need 0.25 for start
@@ -77,18 +78,18 @@ class KickerDaem(object):
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
 
 
-class KMService(QtService):
-    def main(self):
-        print('run main')
-        self.w = KickerDaem()
+# class KMService(QtService):
+#     def main(self):
+#         print('run main')
+#         self.w = KickerDaem()
+#
+#     def clean(self):
+#         self.log_str('exiting kicker_monitor')
 
-    def clean(self):
-        self.log_str('exiting kicker_monitor')
-
-# if __name__ == "__main__":
-#     app = QApplication(['kicker_monitor'])
-#     w = KickerDaem()
-#     sys.exit(app.exec_())
+if __name__ == "__main__":
+    app = QApplication(['kicker_monitor'])
+    w = KickerDaem()
+    sys.exit(app.exec_())
 
 
-km = KMService("inj_infl_monitor")
+# km = KMService("inj_infl_monitor")
