@@ -92,4 +92,4 @@ class KMService(QtService):
 #     sys.exit(app.exec_())
 
 
-km = KMService("inj_infl_monitor")
+km = KMService("infl_monitor")
