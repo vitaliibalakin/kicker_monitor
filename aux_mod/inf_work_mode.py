@@ -56,9 +56,11 @@ class InfWorkMode:
             filename = self.dir + self.cycle_part + "/good_chan_positron"
         else:
             print("WTF")
-        print(filename)
-        data = np.loadtxt(filename, skiprows=1)
-        i = 0
-        for key, infl in self.inflectors[self.ic_mode].items():
-            infl.chan_volt_good.setValue(data[i])
-            i += 1
+        try:
+            data = np.loadtxt(filename, skiprows=1)
+            i = 0
+            for key, infl in self.inflectors[self.ic_mode].items():
+                infl.chan_volt_good.setValue(data[i])
+                i += 1
+        except Exception as exc:
+            print(exc, 'mode is not uploaded yet')
