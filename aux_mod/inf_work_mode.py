@@ -10,7 +10,8 @@ from kicker_monitor.aux_mod.inflector_dev import InfDef
 class InfWorkMode:
     def __init__(self, cycle_part, data_proc, dir_d):
         super(InfWorkMode, self).__init__()
-        self.dir = dir_d + 'km_'
+
+        self.dir = dir_d + '/km_'
         self.ic_mode = ''
         self.active_tab = {'p': 1, 'e': 0}
 

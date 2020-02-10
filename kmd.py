@@ -21,48 +21,37 @@ class KickerDaem(object):
         self.res_chan = cda.StrChan("cxhw:2.kickADCproc.inj.res", on_update=1, max_nelems=1024)
 
         self.inj = InfWorkMode("inj", self.data_proc, os.getcwd())
-
         self.n_interp = 20
         self.STEP = 5.6 / self.n_interp  # = 0.28, I need 0.25 for start
 
         self.time_stamp = 0
 
-        self.ki_time = np.zeros((75 * self.n_interp,), dtype=np.double)
-        self.ki_amp_g = np.zeros((75 * self.n_interp,), dtype=np.double)  # g = good
-        self.ki_amp_c = np.zeros((75 * self.n_interp,), dtype=np.double)  # c = compare
-
         self.cmd_chan.valueMeasured.connect(self.daemon_cmd)
         print("prog_start")
 
     def data_proc(self, infl):
-        self.expanding_data(infl.good_t_arr, infl.chan_volt_good.val[305:381], infl.cur_val[305:381])
-        self.correlation(infl.chan_delta_arr, infl.good_t_arr, infl.cur_val[305:381])
+        # expanding data before correlation
+        tck = interpolate.splrep(infl.good_t_arr, infl.chan_volt_good.val[275:351], s=0)
+        tck1 = interpolate.splrep(infl.good_t_arr, infl.cur_val[275:351], s=0)
+        ki_time = np.arange(0.0, 420.0, self.STEP)
+        ki_amp_g = interpolate.splev(ki_time, tck, der=0)
+        ki_amp_c = interpolate.splev(ki_time, tck1, der=0)
 
-    def expanding_data(self, t_data_good, u_data_good, u_data):
-        tck = interpolate.splrep(t_data_good, u_data_good, s=0)
-        tck1 = interpolate.splrep(t_data_good, u_data, s=0)
-        self.ki_time = np.arange(0.0, 375.0, self.STEP)
-        self.ki_amp_g = interpolate.splev(self.ki_time, tck, der=0)
-        self.ki_amp_c = interpolate.splev(self.ki_time, tck1, der=0)
-
-    def correlation(self, chan_dt_arr, time, u_data):
-        corr = np.correlate(self.ki_amp_c, self.ki_amp_g, 'same')
-        delta_t = (corr.argmax() - (len(corr) / 2)) * self.STEP
-        # corr1 = np.correlate(self.ki_amp_c, self.ki_amp_g, 'full')
-        # delta_t1 = (corr1.argmax() - (len(corr1) / 2)) * self.STEP
+        # correlation process
+        corr = np.correlate(ki_amp_c, ki_amp_g, 'same')
+        delta_t = (np.argmax(corr) - (len(corr) / 2)) * self.STEP
         if abs(delta_t) < 20:
             # gaussfit = lambda p, x: p[0] * np.exp(-(((x - p[1]) / p[2]) ** 2) / 2) + p[3]  # signal peak and ampl
             # errfunc = lambda p, x, y: gaussfit(p, x) - u_data
             # p = [0.4, 150, 90, 0]
             # p1, success = optimize.leastsq(errfunc, p[:], args=(time, u_data))
-            delta_t_arr = chan_dt_arr.val
+            delta_t_arr = infl.chan_delta_arr.val
             if len(delta_t_arr) > 99:
                 delta_t_arr = np.delete(delta_t_arr, 0)
             delta_t_arr = np.append(delta_t_arr, delta_t)
-            chan_dt_arr.setValue(delta_t_arr)
+            infl.chan_delta_arr.setValue(delta_t_arr)
 
     def daemon_cmd(self, chan):
-        # print(chan.val)
         cmd = chan.val
         if cmd:
             cdict = json.loads(cmd)
