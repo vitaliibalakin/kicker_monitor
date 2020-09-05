@@ -34,7 +34,9 @@ class InfWorkMode:
         self.chan_ic_mode.valueChanged.connect(self.kkr_sel)
 
     def kkr_sel(self, chan):
+        # print(chan.val)
         self.ic_mode = chan.val[0]
+        # self.ic_mode = 'e'
         self.chan_sel_all.setValue(self.active_tab[self.ic_mode])
 
     def data_receiver(self, val, i_type):

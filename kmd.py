@@ -53,6 +53,7 @@ class KickerDaem(object):
 
     def daemon_cmd(self, chan):
         cmd = chan.val
+        print(cmd)
         if cmd:
             cdict = json.loads(cmd)
             if cdict['cmd'] == 'save_inj':
