@@ -60,11 +60,13 @@ class KickerDaem(object):
                 self.inj.load_new_good_vals()
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
             elif cdict['cmd'] == 'save_ext':
+                # self.ext.load_new_good_vals()
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
             if cdict['cmd'] == 'stg_dflt_inj':
                 self.inj.adc200_kkr_default()
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
             elif cdict['cmd'] == 'stg_dflt_ext':
+                # self.ext.adc200_kkr_default()
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
 
 
