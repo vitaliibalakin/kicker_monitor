@@ -70,18 +70,18 @@ class KickerDaem(object):
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
 
 
-class KMService(QtService):
-    def main(self):
-        print('run main')
-        self.w = KickerDaem()
+# class KMService(QtService):
+#     def main(self):
+#         print('run main')
+#         self.w = KickerDaem()
+#
+#     def clean(self):
+#         self.log_str('exiting kicker_monitor')
 
-    def clean(self):
-        self.log_str('exiting kicker_monitor')
-
-# if __name__ == "__main__":
-#     app = QApplication(['kicker_monitor'])
-#     w = KickerDaem()
-#     sys.exit(app.exec_())
+if __name__ == "__main__":
+    app = QApplication(['kicker_monitor'])
+    w = KickerDaem()
+    sys.exit(app.exec_())
 
 
-km = KMService("infl_monitor")
+# km = KMService("infl_monitor")

@@ -108,16 +108,18 @@ class KickerPlot(QMainWindow):
         self.save_label = {'p': self.label_save_time_p, 'e': self.label_save_time_e}
 
     def data_receiver(self, data, source, inf_type, which='cur'):
-        if source == 'p':
-            self.p_signal_plots[inf_type].update_signal(data, which)
-        elif source == 'e':
-            self.e_signal_plots[inf_type].update_signal(data, which)
-        elif source == 'h_p':
-            self.p_histo_plots[inf_type].update_signal(data, self.range_a, self.range_b, self.bins_num)
-        elif source == 'h_e':
-            self.e_histo_plots[inf_type].update_signal(data, self.range_a, self.range_b, self.bins_num)
-        else:
-            print("shouldn't be here")
+        # print(data[:10], source, inf_type)
+        if len(data):
+            if source == 'p':
+                self.p_signal_plots[inf_type].update_signal(data, which)
+            elif source == 'e':
+                self.e_signal_plots[inf_type].update_signal(data, which)
+            elif source == 'h_p':
+                self.p_histo_plots[inf_type].update_signal(data, self.range_a, self.range_b, self.bins_num)
+            elif source == 'h_e':
+                self.e_histo_plots[inf_type].update_signal(data, self.range_a, self.range_b, self.bins_num)
+            else:
+                print("shouldn't be here")
 
     def hist_tun(self):
         self.range_a = -1 * self.spinBox_hist_range.value()
