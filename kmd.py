@@ -21,6 +21,7 @@ class KickerDaem(object):
         self.res_chan = cda.StrChan("cxhw:2.kickADCproc.inj.res", on_update=1, max_nelems=1024)
 
         self.inj = InfWorkMode("inj", self.data_proc, os.getcwd())
+        # self.ext = InfWorkMode("ext", self.data_proc, os.getcwd())
         self.n_interp = 20
         self.STEP = 5.6 / self.n_interp  # = 0.28, I need 0.25 for start
 
@@ -53,7 +54,7 @@ class KickerDaem(object):
 
     def daemon_cmd(self, chan):
         cmd = chan.val
-        print(cmd)
+        # print(cmd)
         if cmd:
             cdict = json.loads(cmd)
             if cdict['cmd'] == 'save_inj':
