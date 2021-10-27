@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import pycx4.qcda as cda
+import pycx4.pycda as cda
 import numpy as np
 import os
 from kicker_monitor.aux_mod.adc import ADC
@@ -19,14 +19,14 @@ class InfWorkMode:
         self.cycle_part = cycle_part
 
         self.adcs = [ADC(self.data_receiver, "adc200_kkr1"), ADC(self.data_receiver, "adc200_kkr2")]
-        self.inflectors = {"p": {"adc200_kkr1.line1": InfDef(cycle_part, "prekick.p.pos"),
-                                 "adc200_kkr1.line2": InfDef(cycle_part, "prekick.p.neg"),
-                                 "adc200_kkr2.line1": InfDef(cycle_part, "kick.p.pos"),
-                                 "adc200_kkr2.line2": InfDef(cycle_part, "kick.p.neg")},
-                           "e": {"adc200_kkr1.line1": InfDef(cycle_part, "prekick.e.pos"),
-                                 "adc200_kkr1.line2": InfDef(cycle_part, "prekick.e.neg"),
-                                 "adc200_kkr2.line1": InfDef(cycle_part, "kick.e.pos"),
-                                 "adc200_kkr2.line2": InfDef(cycle_part, "kick.e.neg")}}
+        self.inflectors = {"p": {"adc200_kkr1.line2": InfDef(cycle_part, "prekick.p.pos"),
+                                 "adc200_kkr1.line1": InfDef(cycle_part, "prekick.p.neg"),
+                                 "adc200_kkr2.line2": InfDef(cycle_part, "kick.p.pos"),
+                                 "adc200_kkr2.line1": InfDef(cycle_part, "kick.p.neg")},
+                           "e": {"adc200_kkr1.line2": InfDef(cycle_part, "prekick.e.pos"),
+                                 "adc200_kkr1.line1": InfDef(cycle_part, "prekick.e.neg"),
+                                 "adc200_kkr2.line2": InfDef(cycle_part, "kick.e.pos"),
+                                 "adc200_kkr2.line1": InfDef(cycle_part, "kick.e.neg")}}
 
         self.chan_ic_mode = cda.StrChan("cxhw:0.k500.modet", max_nelems=4)
         self.chan_sel_all = cda.DChan("cxhw:18.kkr_sel_all.0")
@@ -34,9 +34,7 @@ class InfWorkMode:
         self.chan_ic_mode.valueChanged.connect(self.kkr_sel)
 
     def kkr_sel(self, chan):
-        # print(chan.val)
         self.ic_mode = chan.val[0]
-        # self.ic_mode = 'e'
         self.chan_sel_all.setValue(self.active_tab[self.ic_mode])
 
     def data_receiver(self, val, i_type):

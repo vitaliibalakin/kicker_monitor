@@ -14,5 +14,4 @@ class CXDataExchange:
         self.chan_data.valueMeasured.connect(self.data_proc)
 
     def data_proc(self, chan):
-        print(chan.name, self.source, self.inf_type)
         self.data_receiver(chan.val, self.source, self.inf_type)

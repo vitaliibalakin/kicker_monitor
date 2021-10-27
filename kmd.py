@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 
-from PyQt5.QtWidgets import QApplication
 import sys
-
-import numpy as np
 import os
+import numpy as np
 from scipy import optimize
 from scipy import interpolate
-from aux.service_daemon import QtService
-import pycx4.qcda as cda
+
+import pycx4.pycda as cda
 import json
 from kicker_monitor.aux_mod.inf_work_mode import InfWorkMode
 
@@ -24,7 +22,6 @@ class KickerDaem(object):
         # self.ext = InfWorkMode("ext", self.data_proc, os.getcwd())
         self.n_interp = 20
         self.STEP = 5.6 / self.n_interp  # = 0.28, I need 0.25 for start
-
         self.time_stamp = 0
 
         self.cmd_chan.valueMeasured.connect(self.daemon_cmd)
@@ -54,7 +51,6 @@ class KickerDaem(object):
 
     def daemon_cmd(self, chan):
         cmd = chan.val
-        # print(cmd)
         if cmd:
             cdict = json.loads(cmd)
             if cdict['cmd'] == 'save_inj':
@@ -71,7 +67,7 @@ class KickerDaem(object):
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
 
 
-class KMService(QtService):
+class KMService(CxService):
     def main(self):
         print('run main')
         self.w = KickerDaem()
@@ -79,10 +75,8 @@ class KMService(QtService):
     def clean(self):
         self.log_str('exiting kicker_monitor')
 
-# if __name__ == "__main__":
-#     app = QApplication(['kicker_monitor'])
-#     w = KickerDaem()
-#     sys.exit(app.exec_())
-
-
 km = KMService("infl_monitor")
+
+# if __name__ == "__main__":
+#     w = KickerDaem()
+#     cda.main_loop()

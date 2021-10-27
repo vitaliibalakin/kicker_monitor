@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import pycx4.qcda as cda
+import pycx4.pycda as cda
 import numpy as np
 
 
