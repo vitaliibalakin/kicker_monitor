@@ -1,0 +1,19 @@
+# injection adc configuration
+
+[adc_list]
+adc200_kkr2,adc200_kkr1
+[end]
+
+[p_names_rel]
+adc200_kkr1.line2=prekick.p.pos
+adc200_kkr1.line1=prekick.p.neg
+adc200_kkr2.line2=kick.p.pos
+adc200_kkr2.line1=kick.p.neg
+[end]
+
+[e_names_rel]
+adc200_kkr1.line2=prekick.e.pos
+adc200_kkr1.line1=prekick.e.neg
+adc200_kkr2.line2=kick.e.pos
+adc200_kkr2.line1=kick.e.neg
+[end]

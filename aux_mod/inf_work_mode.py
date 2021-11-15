@@ -5,28 +5,22 @@ import numpy as np
 import os
 from kicker_monitor.aux_mod.adc import ADC
 from kicker_monitor.aux_mod.inflector_dev import InfDef
+from kicker_monitor.aux_mod.config_parser import load_config
 
 
 class InfWorkMode:
-    def __init__(self, cycle_part, data_proc, dir_d):
+    def __init__(self, cycle_part, conf_name, data_proc, dir_d):
         super(InfWorkMode, self).__init__()
-
         self.dir = dir_d + '/km_'
         self.ic_mode = ''
         self.active_tab = {'p': 1, 'e': 0}
 
         self.data_proc = data_proc
         self.cycle_part = cycle_part
-
-        self.adcs = [ADC(self.data_receiver, "adc200_kkr1"), ADC(self.data_receiver, "adc200_kkr2")]
-        self.inflectors = {"p": {"adc200_kkr1.line2": InfDef(cycle_part, "prekick.p.pos"),
-                                 "adc200_kkr1.line1": InfDef(cycle_part, "prekick.p.neg"),
-                                 "adc200_kkr2.line2": InfDef(cycle_part, "kick.p.pos"),
-                                 "adc200_kkr2.line1": InfDef(cycle_part, "kick.p.neg")},
-                           "e": {"adc200_kkr1.line2": InfDef(cycle_part, "prekick.e.pos"),
-                                 "adc200_kkr1.line1": InfDef(cycle_part, "prekick.e.neg"),
-                                 "adc200_kkr2.line2": InfDef(cycle_part, "kick.e.pos"),
-                                 "adc200_kkr2.line1": InfDef(cycle_part, "kick.e.neg")}}
+        adc_list, p_names, e_names = load_config(conf_name)
+        self.adcs = [ADC(self.data_receiver, name) for name in adc_list]
+        self.inflectors = {"p": {key: InfDef(cycle_part, val) for key, val in p_names.items()},
+                           "e": {key: InfDef(cycle_part, val) for key, val in e_names.items()}}
 
         self.chan_ic_mode = cda.StrChan("cxhw:0.k500.modet", max_nelems=4)
         self.chan_sel_all = cda.DChan("cxhw:18.kkr_sel_all.0")

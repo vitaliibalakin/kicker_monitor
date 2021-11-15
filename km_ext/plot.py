@@ -27,8 +27,8 @@ class KickerPlot(QMainWindow):
         self.bins_num = 10
 
         # plot area
-        self.e_signal_plots = {"pre_pos": SignalPlot(self, -0.05, 0.5), "pre_neg": SignalPlot(self, -0.5, 0.05),
-                               "kick_pos": SignalPlot(self, -0.12, 0.5), "kick_neg": SignalPlot(self, -0.5, 0.04)}
+        self.e_signal_plots = {"pre_pos": SignalPlot(self, -0.05, 1), "pre_neg": SignalPlot(self, -1, 0.05),
+                               "kick_pos": SignalPlot(self, -0.12, 0.25), "kick_neg": SignalPlot(self, -0.25, 0.04)}
         self.e_histo_plots = {key: HistoPlot(self) for key, val in self.e_signal_plots.items()}
         # widgets positioning
         e_layout = QGridLayout()
@@ -42,8 +42,8 @@ class KickerPlot(QMainWindow):
         e_layout.addWidget(self.e_signal_plots["kick_neg"], 3, 1)
         self.uni_e.setLayout(e_layout)
 
-        self.p_signal_plots = {"pre_pos": SignalPlot(self, -0.05, 0.5), "pre_neg": SignalPlot(self, -0.5, 0.05),
-                               "kick_pos": SignalPlot(self, -0.12, 0.5), "kick_neg": SignalPlot(self, -0.5, 0.04)}
+        self.p_signal_plots = {"pre_pos": SignalPlot(self, -0.05, 1), "pre_neg": SignalPlot(self, -1, 0.05),
+                               "kick_pos": SignalPlot(self, -0.12, 0.25), "kick_neg": SignalPlot(self, -0.25, 0.04)}
         self.p_histo_plots = {key: HistoPlot(self) for key, val in self.p_signal_plots.items()}
         p_layout = QGridLayout()
         p_layout.addWidget(self.p_histo_plots["pre_pos"], 0, 0)
@@ -56,37 +56,37 @@ class KickerPlot(QMainWindow):
         p_layout.addWidget(self.p_signal_plots["kick_neg"], 3, 1)
         self.uni_p.setLayout(p_layout)
 
-        self.chan_data_t = {"e": [CXDataExchange(self.data_receiver, "cxhw:2.inj.prekick.e.pos.Utemp", "e", "pre_pos",
+        self.chan_data_t = {"e": [CXDataExchange(self.data_receiver, "cxhw:2.ext.prekick.e.pos.Utemp", "e", "pre_pos",
                                                  n_elems=1024),
-                                  CXDataExchange(self.data_receiver, "cxhw:2.inj.prekick.e.neg.Utemp", "e", "pre_neg",
+                                  CXDataExchange(self.data_receiver, "cxhw:2.ext.prekick.e.neg.Utemp", "e", "pre_neg",
                                                  n_elems=1024),
-                                  CXDataExchange(self.data_receiver, "cxhw:2.inj.kick.e.pos.Utemp", "e", "kick_pos",
+                                  CXDataExchange(self.data_receiver, "cxhw:2.ext.kick.e.pos.Utemp", "e", "kick_pos",
                                                  n_elems=1024),
-                                  CXDataExchange(self.data_receiver, "cxhw:2.inj.kick.e.neg.Utemp", "e", "kick_neg",
+                                  CXDataExchange(self.data_receiver, "cxhw:2.ext.kick.e.neg.Utemp", "e", "kick_neg",
                                                  n_elems=1024)],
-                            "p": [CXDataExchange(self.data_receiver, "cxhw:2.inj.prekick.p.pos.Utemp", "p", "pre_pos",
+                            "p": [CXDataExchange(self.data_receiver, "cxhw:2.ext.prekick.p.pos.Utemp", "p", "pre_pos",
                                                  n_elems=1024),
-                                  CXDataExchange(self.data_receiver, "cxhw:2.inj.prekick.p.neg.Utemp", "p", "pre_neg",
+                                  CXDataExchange(self.data_receiver, "cxhw:2.ext.prekick.p.neg.Utemp", "p", "pre_neg",
                                                  n_elems=1024),
-                                  CXDataExchange(self.data_receiver, "cxhw:2.inj.kick.p.pos.Utemp", "p", "kick_pos",
+                                  CXDataExchange(self.data_receiver, "cxhw:2.ext.kick.p.pos.Utemp", "p", "kick_pos",
                                                  n_elems=1024),
-                                  CXDataExchange(self.data_receiver, "cxhw:2.inj.kick.p.neg.Utemp", "p", "kick_neg",
+                                  CXDataExchange(self.data_receiver, "cxhw:2.ext.kick.p.neg.Utemp", "p", "kick_neg",
                                                  n_elems=1024)]}
-        self.chan_hist_t = {"e": [CXDataExchange(self.data_receiver, "cxhw:2.inj.prekick.e.pos.delta_t_array", "h_e",
+        self.chan_hist_t = {"e": [CXDataExchange(self.data_receiver, "cxhw:2.ext.prekick.e.pos.delta_t_array", "h_e",
                                                  "pre_pos", n_elems=200),
-                                  CXDataExchange(self.data_receiver, "cxhw:2.inj.prekick.e.neg.delta_t_array", "h_e",
+                                  CXDataExchange(self.data_receiver, "cxhw:2.ext.prekick.e.neg.delta_t_array", "h_e",
                                                  "pre_neg", n_elems=200),
-                                  CXDataExchange(self.data_receiver, "cxhw:2.inj.kick.e.pos.delta_t_array", "h_e",
+                                  CXDataExchange(self.data_receiver, "cxhw:2.ext.kick.e.pos.delta_t_array", "h_e",
                                                  "kick_pos", n_elems=200),
-                                  CXDataExchange(self.data_receiver, "cxhw:2.inj.kick.e.neg.delta_t_array", "h_e",
+                                  CXDataExchange(self.data_receiver, "cxhw:2.ext.kick.e.neg.delta_t_array", "h_e",
                                                  "kick_neg", n_elems=200)],
-                            "p": [CXDataExchange(self.data_receiver, "cxhw:2.inj.prekick.p.pos.delta_t_array", "h_p",
+                            "p": [CXDataExchange(self.data_receiver, "cxhw:2.ext.prekick.p.pos.delta_t_array", "h_p",
                                                  "pre_pos", n_elems=200),
-                                  CXDataExchange(self.data_receiver, "cxhw:2.inj.prekick.p.neg.delta_t_array", "h_p",
+                                  CXDataExchange(self.data_receiver, "cxhw:2.ext.prekick.p.neg.delta_t_array", "h_p",
                                                  "pre_neg", n_elems=200),
-                                  CXDataExchange(self.data_receiver, "cxhw:2.inj.kick.p.pos.delta_t_array", "h_p",
+                                  CXDataExchange(self.data_receiver, "cxhw:2.ext.kick.p.pos.delta_t_array", "h_p",
                                                  "kick_pos", n_elems=200),
-                                  CXDataExchange(self.data_receiver, "cxhw:2.inj.kick.p.neg.delta_t_array", "h_p",
+                                  CXDataExchange(self.data_receiver, "cxhw:2.ext.kick.p.neg.delta_t_array", "h_p",
                                                  "kick_neg", n_elems=200)]}
         self.file_data_exchange = FileDataExchange(os.getcwd(), self.data_receiver)
 

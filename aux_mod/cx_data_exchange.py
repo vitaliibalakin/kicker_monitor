@@ -4,7 +4,7 @@ import pycx4.qcda as cda
 
 
 class CXDataExchange:
-    def __init__(self, data_receiver, chan_name, source, inf_type, n_elems=1024):
+    def __init__(self, data_receiver, chan_name, source, inf_type, n_elems=200):
         super(CXDataExchange, self).__init__()
         self.data_receiver = data_receiver
         self.source = source
@@ -14,4 +14,5 @@ class CXDataExchange:
         self.chan_data.valueMeasured.connect(self.data_proc)
 
     def data_proc(self, chan):
+        # print(chan.name, len(chan.val))
         self.data_receiver(chan.val, self.source, self.inf_type)

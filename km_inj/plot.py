@@ -27,8 +27,8 @@ class KickerPlot(QMainWindow):
         self.bins_num = 10
 
         # plot area
-        self.e_signal_plots = {"pre_pos": SignalPlot(self, -0.05, 0.5), "pre_neg": SignalPlot(self, -0.5, 0.05),
-                               "kick_pos": SignalPlot(self, -0.12, 0.5), "kick_neg": SignalPlot(self, -0.5, 0.04)}
+        self.e_signal_plots = {"pre_pos": SignalPlot(self, -0.05, 0.25), "pre_neg": SignalPlot(self, -0.25, 0.05),
+                               "kick_pos": SignalPlot(self, -0.12, 0.25), "kick_neg": SignalPlot(self, -0.25, 0.04)}
         self.e_histo_plots = {key: HistoPlot(self) for key, val in self.e_signal_plots.items()}
         # widgets positioning
         e_layout = QGridLayout()
@@ -42,8 +42,8 @@ class KickerPlot(QMainWindow):
         e_layout.addWidget(self.e_signal_plots["kick_neg"], 3, 1)
         self.uni_e.setLayout(e_layout)
 
-        self.p_signal_plots = {"pre_pos": SignalPlot(self, -0.05, 0.5), "pre_neg": SignalPlot(self, -0.5, 0.05),
-                               "kick_pos": SignalPlot(self, -0.12, 0.5), "kick_neg": SignalPlot(self, -0.5, 0.04)}
+        self.p_signal_plots = {"pre_pos": SignalPlot(self, -0.05, 0.25), "pre_neg": SignalPlot(self, -0.25, 0.05),
+                               "kick_pos": SignalPlot(self, -0.12, 0.25), "kick_neg": SignalPlot(self, -0.25, 0.04)}
         self.p_histo_plots = {key: HistoPlot(self) for key, val in self.p_signal_plots.items()}
         p_layout = QGridLayout()
         p_layout.addWidget(self.p_histo_plots["pre_pos"], 0, 0)

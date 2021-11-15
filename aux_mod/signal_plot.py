@@ -19,7 +19,7 @@ class SignalPlot(pg.PlotWidget):
         self.addItem(self.temp_plot)
 
     def update_signal(self, signal, p_type):
-        self.plot_type[p_type].setData(np.arange(0.0, 76.0, 1) * 5.6, signal[275:351])
+        self.plot_type[p_type].setData(np.arange(0.0, 200.0, 1) * 5.6, signal)
 
 
 if __name__ == "__main__":

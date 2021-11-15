@@ -4,7 +4,7 @@ import pycx4.pycda as cda
 
 
 class ADC:
-    def __init__(self, data_receiver, name, n_elems=424):
+    def __init__(self, data_receiver, name, n_elems=200):
         super(ADC, self).__init__()
         self.name = name
         self.data_receiver = data_receiver
@@ -25,8 +25,8 @@ class ADC:
         self.data_receiver(chan.val, self.name + "." + chan.name.split(".")[-1])
 
     def adc_set_def(self):
-        self.chan_adc200_ptsofs.setValue(540)
-        self.chan_adc200_numpts.setValue(424)
+        self.chan_adc200_ptsofs.setValue(0)
+        self.chan_adc200_numpts.setValue(200)
         self.chan_adc200_timing.setValue(1)
         self.chan_adc200_frq_div.setValue(0)
         self.chan_range_pos.setValue(1)
