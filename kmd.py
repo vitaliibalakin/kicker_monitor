@@ -28,7 +28,6 @@ class KickerDaem(object):
 
     def data_proc(self, infl):
         # expanding data before correlation
-        # print('good', len(infl.chan_volt_good.val), infl.inf_type)
         try:
             tck = interpolate.splrep(infl.good_t_arr, infl.chan_volt_good.val, s=0)
             tck1 = interpolate.splrep(infl.good_t_arr, infl.cur_val, s=0)
@@ -39,7 +38,7 @@ class KickerDaem(object):
             # correlation process
             corr = np.correlate(ki_amp_c, ki_amp_g, 'same')
             delta_t = (np.argmax(corr) - (len(corr) / 2)) * self.STEP
-            # print(delta_t, np.argmax(ki_amp_c), np.argmax(ki_amp_g), infl.inf_type)
+            # print(delta_t, np.argmax(ki_amp_c), np.argmax(ki_amp_g), infl.chan_volt_good.name)
             if abs(delta_t) < 100:
                 # gaussfit = lambda p, x: p[0] * np.exp(-(((x - p[1]) / p[2]) ** 2) / 2) + p[3]  # signal peak and ampl
                 # errfunc = lambda p, x, y: gaussfit(p, x) - u_data
@@ -61,27 +60,27 @@ class KickerDaem(object):
                 self.inj.load_new_good_vals()
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
             elif cdict['cmd'] == 'save_ext':
-                # self.ext.load_new_good_vals()
+                self.ext.load_new_good_vals()
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
             if cdict['cmd'] == 'stg_dflt_inj':
                 self.inj.adc200_kkr_default()
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
             elif cdict['cmd'] == 'stg_dflt_ext':
-                # self.ext.adc200_kkr_default()
+                self.ext.adc200_kkr_default()
                 self.cmd_chan.setValue(json.dumps({'cmd': 'ready'}))
 
 DIR = os.getcwd()
 
-class KMService(CXService):
-    def main(self):
-        print('run main')
-        self.w = KickerDaem()
+# class KMService(CXService):
+#     def main(self):
+#         print('run main')
+#         self.w = KickerDaem()
+#
+#     def clean(self):
+#         self.log_str('exiting kicker_monitor')
+#
+# km = KMService("infl_monitor")
 
-    def clean(self):
-        self.log_str('exiting kicker_monitor')
-
-km = KMService("infl_monitor")
-
-# if __name__ == "__main__":
-#     w = KickerDaem()
-#     cda.main_loop()
+if __name__ == "__main__":
+    w = KickerDaem()
+    cda.main_loop()
