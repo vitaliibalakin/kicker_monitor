@@ -35,6 +35,10 @@ class KickerDaem(object):
             ki_amp_g = interpolate.splev(ki_time, tck, der=0)
             ki_amp_c = interpolate.splev(ki_time, tck1, der=0)
 
+            # if infl.source == 'ext':
+            #     print('good', np.argmax(ki_amp_g))
+            #     print('current', np.argmax(ki_amp_c))
+
             # correlation process
             corr = np.correlate(ki_amp_c, ki_amp_g, 'same')
             delta_t = (np.argmax(corr) - (len(corr) / 2)) * self.STEP
